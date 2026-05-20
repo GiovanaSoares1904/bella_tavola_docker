@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from routers import pratos, bebidas, pedidos, reservas
 from config import get_settings
 
+
 settings = get_settings()
 
 app = FastAPI(
@@ -12,7 +13,7 @@ app = FastAPI(
     version=settings.app_version,
 )
 
-# Manipuladores de Exceção Personalizados 
+# --- Manipuladores de Exceção Personalizados ---
 
 
 @app.exception_handler(RequestValidationError)
@@ -49,14 +50,14 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
-# Inclusão das Rotas 
+# --- Inclusão das Rotas ---
 
 app.include_router(pratos.router, prefix="/pratos", tags=["Pratos"])
 app.include_router(bebidas.router, prefix="/bebidas", tags=["Bebidas"])
 app.include_router(pedidos.router, prefix="/pedidos", tags=["Pedidos"])
 app.include_router(reservas.router, prefix="/reservas", tags=["Reservas"])
 
-# Rota Raiz 
+# --- Rota Raiz ---
 
 
 @app.get("/", tags=["Geral"])
