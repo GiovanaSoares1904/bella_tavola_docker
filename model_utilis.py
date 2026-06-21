@@ -1,4 +1,5 @@
 from sklearn.datasets import make_classification
+from model_utils import load_model
 import pandas as pd
 
 X, y = make_classification(
@@ -16,3 +17,4 @@ df["target"] = y
 
 print(df.head())
 print(f"\nDistribuição do target:\n{df['target'].value_counts()}")
+print('OK')

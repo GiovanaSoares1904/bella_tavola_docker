@@ -1,0 +1,29 @@
+/app/.dockerignore
+/app/.github/workflows/ci.yml
+/app/~$idências Caderno 05 - Parte 01.docx
+/app/config.py
+/app/docker-compose.yml
+/app/Dockerfile
+/app/Dockerfile.alpine
+/app/Evidências Caderno 05 - Parte 01.docx
+/app/main.py
+/app/model_ex02_4_5.py
+/app/model_utilis.py
+/app/models/__init__.py
+/app/models/bebida.py
+/app/models/model_ex02_4_5.py
+/app/models/pedido.py
+/app/models/prato.py
+/app/models/reserva.py
+/app/README.md
+/app/requirements.txt
+/app/routers/__init__.py
+/app/routers/__pycache__/__init__.cpython-312.pyc
+/app/routers/__pycache__/bebidas.cpython-312.pyc
+/app/routers/__pycache__/pedidos.cpython-312.pyc
+/app/routers/__pycache__/pratos.cpython-312.pyc
+/app/routers/__pycache__/reservas.cpython-312.pyc
+/app/routers/bebidas.py
+/app/routers/pedidos.py
+/app/routers/pratos.py
+/app/routers/reservas.py

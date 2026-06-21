@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .          # constrói a partir do Dockerfile no diretório atual
+    ports:
+      - "8000:8000"   # PORTA_HOST:PORTA_CONTAINER
+    env_file:
+      - .env          # carrega HF_TOKEN e outras variáveis
+    volumes:
+      - bella-dados:/app/data
+
+volumes:             # declara os volumes usados
+  bella-dados:        # sem configuração adicional = volume local padrão

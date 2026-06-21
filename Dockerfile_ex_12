@@ -1,0 +1,25 @@
+# Dockerfile atualizado com usuário não-root
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Cria grupo e usuário sem privilégios
+# addgroup --system: cria grupo do sistema (sem entrada no /etc/passwd)
+# adduser --system: cria usuário do sistema sem senha e sem shell de login
+RUN addgroup --system appgroup && \
+    adduser --system --ingroup appgroup appuser
+
+# Transfere a propriedade dos arquivos para o novo usuário
+RUN chown -R appuser:appgroup /app
+
+# Troca para o usuário sem privilégios
+# Todas as instruções seguintes (CMD, ENTRYPOINT) rodam como appuser
+USER appuser
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
