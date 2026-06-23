@@ -1,5 +1,4 @@
 
-
 # ci.yml com testes seletivos por evento
 
  name: CI — Bella Tavola
@@ -35,8 +34,8 @@
        - run: pip install --upgrade pip && pip install -r requirements.txt
        - name: Rodar todos os testes
          run: pytest tests/ -v --tb=short
-         
-docker:
+		 
+ docker:
     runs-on: ubuntu-latest
     needs: integracao
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -73,4 +72,20 @@ docker:
             ${{ secrets.DOCKER_USERNAME }}/bella-tavola:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-```
+
+  relatorio:
+    runs-on: ubuntu-latest
+    needs: docker        # ← atualizado de 'integracao' para 'docker'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resumo do pipeline
+        run: |
+          echo "================================================"
+          echo "  Pipeline CI do Bella Tavola concluído ✅"
+          echo "================================================"
+          echo "  Branch:  ${{ github.ref_name }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Autor:   ${{ github.actor }}"
+          echo "  Imagem:  ${{ secrets.DOCKER_USERNAME }}/bella-tavola:${{ github.sha }}"
+          echo "================================================"
