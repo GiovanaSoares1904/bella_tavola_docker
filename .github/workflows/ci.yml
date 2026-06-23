@@ -21,7 +21,7 @@
        - name: Rodar testes smoke
          run: pytest tests/ -m smoke -v --tb=short
 
-   testes-completos:
+   testes-integracao:
      runs-on: ubuntu-latest
      needs: testes-smoke
      # Só roda em pushes para o main, não em pull requests
@@ -34,3 +34,57 @@
        - run: pip install --upgrade pip && pip install -r requirements.txt
        - name: Rodar todos os testes
          run: pytest tests/ -v --tb=short
+   docker:
+      runs-on: ubuntu-latest
+      needs: testes-integracao
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+      steps:
+        - name: Baixar o código
+          uses: actions/checkout@v4
+
+        # Configura o BuildKit — o builder moderno do Docker
+        # Necessário para o cache de layers funcionar no CI
+        - name: Configurar Docker Buildx
+          uses: docker/setup-buildx-action@v3
+
+        # Autentica no Docker Hub usando os secrets do repositório
+        # Nunca coloque usuário e senha diretamente no YAML
+        - name: Autenticar no Docker Hub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+
+        # Build e push da imagem
+        # context: . → usa o Dockerfile na raiz do repositório
+        # push: true → envia para o registry após o build
+        # tags: duas tags — hash do commit (rastreabilidade) e latest (conveniência)
+        # cache-from/to → evita rebuildar layers que não mudaram
+        - name: Build e push da imagem
+          uses: docker/build-push-action@v5
+          with:
+            context: .
+            push: true
+            tags: |
+              ${{ secrets.DOCKER_USERNAME }}/bella-tavola:${{ github.sha }}
+              ${{ secrets.DOCKER_USERNAME }}/bella-tavola:latest
+            cache-from: type=gha
+            cache-to: type=gha,mode=max
+
+   relatorio:
+    runs-on: ubuntu-latest
+    needs: docker        # ← atualizado de 'integracao' para 'docker'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resumo do pipeline
+        run: |
+          echo "================================================"
+          echo "  Pipeline CI do Bella Tavola concluído ✅"
+          echo "================================================"
+          echo "  Branch:  ${{ github.ref_name }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Autor:   ${{ github.actor }}"
+          echo "  Imagem:  ${{ secrets.DOCKER_USERNAME }}/bella-tavola:${{ github.sha }}"
+          echo "================================================"
