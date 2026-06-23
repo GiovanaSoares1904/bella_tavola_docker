@@ -33,8 +33,7 @@
            python-version: "3.11"
        - run: pip install --upgrade pip && pip install -r requirements.txt
        - name: Rodar todos os testes
-         run: pytest tests/ -v --tb=short
-		 
+         run: pytest tests/ -v --tb=short	 
  docker:
     runs-on: ubuntu-latest
     needs: integracao
@@ -72,7 +71,6 @@
             ${{ secrets.DOCKER_USERNAME }}/bella-tavola:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
   relatorio:
     runs-on: ubuntu-latest
     needs: docker        # ← atualizado de 'integracao' para 'docker'
