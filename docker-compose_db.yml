@@ -1,0 +1,30 @@
+# docker-compose.yml com API + PostgreSQL
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db             # inicia após o serviço db subir
+    environment:
+      # String de conexão usando o NOME DO SERVIÇO como hostname
+      DATABASE_URL: postgresql://bella:secreta@localhost:5432/bellatavolada
+     # DATABASE_URL: postgresql://bella:secreta@db:5432/bellatavolada
+      #                                          ↑
+      #                            nome do serviço no compose.yml
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bellatavolada
+      POSTGRES_USER: bella
+      POSTGRES_PASSWORD: secreta
+    volumes:
+      - bella-pg-data:/var/lib/postgresql/data
+
+volumes:
+  bella-dados:
+  bella-pg-data:

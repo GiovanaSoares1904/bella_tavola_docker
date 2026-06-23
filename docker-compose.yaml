@@ -1,0 +1,40 @@
+# docker-compose.yml atualizado com Nginx e Healthcheck condicional
+
+services:
+  api:
+    build: .
+    # Não exponha a porta 8000 para o host — o Nginx é o único ponto de entrada
+    # ports: removido intencionalmente
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy   # espera o healthcheck do DB passar
+    environment:
+      DATABASE_URL: postgresql://bella:secreta@db:5432/bellatavolada
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bellatavolada
+      POSTGRES_USER: bella
+      POSTGRES_PASSWORD: secreta
+    volumes:
+      - bella-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bella -d bellatavolada"]
+      interval: 5s      # verifica a cada 5 segundos
+      timeout: 5s       # timeout de cada verificação
+      retries: 5        # tenta 5 vezes antes de marcar como unhealthy
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"            # Nginx exposto na porta 80 do host
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # bind mount do arquivo de config
+    depends_on:
+      - api
+
+volumes:
+  bella-pg-data:

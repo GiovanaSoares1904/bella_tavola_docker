@@ -66,5 +66,5 @@ async def root():
         "restaurante": settings.app_name,
         "versao": settings.app_version,
         "limite_mesas": settings.max_mesas,
-        "status": "Olá do contêiner!" 
+        "status": "Feito a ateração. Olá do contêiner!" 
     }
