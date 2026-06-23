@@ -1,0 +1,18 @@
+
+  relatorio:
+    runs-on: ubuntu-latest
+    needs: docker        # ← atualizado de 'integracao' para 'docker'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resumo do pipeline
+        run: |
+          echo "================================================"
+          echo "  Pipeline CI do Bella Tavola concluído ✅"
+          echo "================================================"
+          echo "  Branch:  ${{ github.ref_name }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Autor:   ${{ github.actor }}"
+          echo "  Imagem:  ${{ secrets.DOCKER_USERNAME }}/bella-tavola:${{ github.sha }}"
+          echo "================================================"
+```
